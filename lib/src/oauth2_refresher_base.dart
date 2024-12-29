@@ -96,7 +96,6 @@ class TokenHandler {
   }
 }
 
-
 /// Exception for handling token refresh errors
 class RevokeTokenException implements Exception {
   final String message;

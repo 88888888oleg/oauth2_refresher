@@ -1,6 +1,6 @@
 name: oauth2_refresher
 description: A Dart library for managing OAuth2 token refreshing with easy integration and support for Dio and JWT decoding.
-version: 1.0.1
+version: 1.0.2
 repository: https://github.com/88888888oleg/oauth2_refresher
 homepage: https://dart-tools.dev
 

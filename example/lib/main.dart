@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'repository/auth_repository.dart';
 
-
 Future<void> main() async {
   /// Log in user
   final res = await AuthRepository.logIn(
@@ -29,8 +28,8 @@ Future<void> main() async {
 
   for (var i = 0; i < results.length; i++) {
     results[i].fold(
-          (error) => print('Request ${i + 1} failed: $error'),
-          (_) => print('Request ${i + 1} succeeded'),
+      (error) => print('Request ${i + 1} failed: $error'),
+      (_) => print('Request ${i + 1} succeeded'),
     );
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 
 abstract final class DioErrorHandler {

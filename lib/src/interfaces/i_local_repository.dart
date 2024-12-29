@@ -7,5 +7,6 @@ abstract interface class ILocalRepository {
   Future<bool> saveRefreshToken({required String refreshToken});
   Future<String> fetchRefreshToken();
   Future<void> clearTokens();
-  Future<bool> saveTokens({required String refreshToken, required String authToken});
+  Future<bool> saveTokens(
+      {required String refreshToken, required String authToken});
 }
