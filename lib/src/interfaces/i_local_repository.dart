@@ -1,3 +1,4 @@
+/// Interface for local repository
 abstract interface class ILocalRepository {
   Future<void> deleteAuthToken();
   Future<bool> saveAuthToken({required String authToken});
