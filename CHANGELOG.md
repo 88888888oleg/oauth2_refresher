@@ -10,3 +10,7 @@
 ## 1.0.2
 
 - Formatted code.
+
+## 1.0.3
+
+- Updated README.md.

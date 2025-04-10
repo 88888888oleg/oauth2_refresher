@@ -1,6 +1,6 @@
 # Flutter OAuth2 Token Refresh Handler
 
-A lightweight package for seamless token refresh in OAuth 2.0. You only need to supply your tokens after the user is authorized and implement a simple method where you construct your request headers. Everything else is done automatically. This package supports parallel requests and serves as an alternative to standard interceptors.
+A lightweight package for seamless token refresh in OAuth 2.0. You only need to supply your tokens after the user is authorized and implement a simple method where you construct your request headers. Everything else is done automatically. This package supports parallel requests and serves as an alternative to standard interceptors. For example, if you send 5 requests simultaneously and the token has already expired, the package will refresh the token first, and only then will all the requests be processed in parallel. During the token refresh request, new requests might come in — they will be added to the queue, and once a fresh token is obtained, all the requests will be handled simultaneously.
 
 ## Table of Contents
 - [Features](#features)
@@ -74,6 +74,22 @@ final idToken = await TokenHandler().fetchToken(refreshUrl: baseUrl());
   }
 }
 ```
+### 3. Always use a new instance of Dio
+Since the handler collects instances into a stream for efficient parallel request handling, you need to use a new Dio instance for each request (this will not affect performance):
+```dart
+static Future<Either<String, void>> example() async {
+  try {
+    await (await ApiClient.authApiClient()).example();
+      return Right(null);
+    } on DioException catch (dioError, s) {
+      return Left(DioErrorHandler.handleDioError(dioError, s));
+    } catch (e) {
+      return Left(e.toString());
+  }
+}
+```
+
+
 ### 4. Token Expiration
 If the refresh token has expired, the package will throw an exception:
 ```dart
