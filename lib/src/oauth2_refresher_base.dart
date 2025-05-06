@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:oauth2_refresher/src/repositories/local/local_repository.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'dart:convert';
 
 /// A singleton class for token refresh handling
 class TokenHandler {
@@ -51,17 +51,18 @@ class TokenHandler {
   /// [refreshUrl] - the URL for refreshing the token
   /// [accessTokenName] - the key name for the access token
   /// [refreshTokenName] - the key name for the refresh token
-  Future<String> fetchToken({
-    required String refreshUrl,
-    String accessTokenName = 'access_token',
-    String refreshTokenName = 'refresh_token',
-  }) async {
+  /// [duration] - the duration in seconds for token expiration
+  Future<String> fetchToken(
+      {required String refreshUrl,
+      String accessTokenName = 'access_token',
+      String refreshTokenName = 'refresh_token',
+      int duration = 60}) async {
     await null;
     final token = await _localRepository.fetchAuthToken();
     if (token.isEmpty) {
       throw NotInitializedException();
     }
-    var hasExpired = token.isNotEmpty ? JwtDecoder.isExpired(token) : false;
+    final hasExpired = isTokenExpired(token, duration);
     if (!hasExpired) {
       return token;
     }
@@ -127,5 +128,33 @@ class NotInitializedException implements Exception {
   @override
   String toString() {
     return "NotInitializedException: $message";
+  }
+}
+
+bool isTokenExpired(String token, int duration) {
+  if (token.isEmpty) return false;
+
+  try {
+    final parts = token.split('.');
+    if (parts.length != 3) return true;
+
+    final payload = parts[1];
+    final normalized = base64.normalize(payload);
+    final decoded = utf8.decode(base64Url.decode(normalized));
+    final payloadMap = json.decode(decoded);
+
+    if (payloadMap is! Map<String, dynamic>) return true;
+
+    final exp = payloadMap['exp'];
+    if (exp is! int) return true;
+
+    final expirationTime = DateTime.fromMillisecondsSinceEpoch(exp * 1000)
+        .subtract(Duration(seconds: duration));
+
+    final now = DateTime.now();
+
+    return now.isAfter(expirationTime);
+  } catch (e) {
+    return true;
   }
 }

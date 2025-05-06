@@ -91,6 +91,7 @@ static Future<Either<String, void>> example() async {
 
 
 ### 4. Token Expiration
+A gap has been added to the expiration time of the auth token to ensure stable operation. By default, the token is considered expired 60 seconds earlier. You can customize this value if needed.
 If the refresh token has expired, the package will throw an exception:
 ```dart
 RevokeTokenException ();
